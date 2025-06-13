@@ -75,7 +75,6 @@ bundler/lib/bundler/fetcher/index.rb
 bundler/lib/bundler/force_platform.rb
 bundler/lib/bundler/friendly_errors.rb
 bundler/lib/bundler/gem_helper.rb
-bundler/lib/bundler/gem_helpers.rb
 bundler/lib/bundler/gem_tasks.rb
 bundler/lib/bundler/gem_version_promoter.rb
 bundler/lib/bundler/graph.rb
@@ -365,6 +364,7 @@ hide_lib_for_update/note.txt
 lib/rubygems.rb
 lib/rubygems/available_set.rb
 lib/rubygems/basic_specification.rb
+lib/rubygems/bundler_integration.rb
 lib/rubygems/bundler_version_finder.rb
 lib/rubygems/ci_detector.rb
 lib/rubygems/command.rb
@@ -524,8 +524,7 @@ lib/rubygems/specification.rb
 lib/rubygems/specification_policy.rb
 lib/rubygems/specification_record.rb
 lib/rubygems/ssl_certs/.document
-lib/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA.pem
-lib/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA_R3.pem
+lib/rubygems/ssl_certs/rubygems.org/GlobalSign.pem
 lib/rubygems/stub_specification.rb
 lib/rubygems/target_rbconfig.rb
 lib/rubygems/text.rb

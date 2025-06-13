@@ -260,7 +260,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "myrack"
       G
 
-      expect(last_command.stdboth).to include(plugin_msg)
+      expect(stdboth).to include(plugin_msg)
     end
 
     describe "with a gem that installs multiple platforms" do
@@ -722,7 +722,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "ajp-rails", "0.0.0"
       G
 
-      expect(last_command.stdboth).not_to match(/Error Report/i)
+      expect(stdboth).not_to match(/Error Report/i)
       expect(err).to include("An error occurred while installing ajp-rails (0.0.0), and Bundler cannot continue.").
         and include("Bundler::APIResponseInvalidDependenciesError")
     end
@@ -1497,6 +1497,55 @@ RSpec.describe "bundle install with gem sources" do
         BUNDLED WITH
            #{Bundler::VERSION}
       L
+    end
+  end
+
+  context "when lockfile has incorrect dependencies" do
+    before do
+      build_repo2
+
+      gemfile <<-G
+        source "https://gem.repo2"
+        gem "myrack_middleware"
+      G
+
+      system_gems "myrack_middleware-1.0", path: default_bundle_path
+
+      # we want to raise when the 1.0 line should be followed by "            myrack (= 0.9.1)" but isn't
+      lockfile <<-L
+        GEM
+          remote: https://gem.repo2/
+          specs:
+            myrack_middleware (1.0)
+
+        PLATFORMS
+          #{lockfile_platforms}
+
+        DEPENDENCIES
+          myrack_middleware
+
+        BUNDLED WITH
+          #{Bundler::VERSION}
+      L
+    end
+
+    it "raises a clear error message when frozen" do
+      bundle "config set frozen true"
+      bundle "install", raise_on_error: false
+
+      expect(exitstatus).to eq(41)
+      expect(err).to eq("Bundler found incorrect dependencies in the lockfile for myrack_middleware-1.0")
+    end
+
+    it "updates the lockfile when not frozen" do
+      missing_dep = "myrack (0.9.1)"
+      expect(lockfile).not_to include(missing_dep)
+
+      bundle "config set frozen false"
+      bundle :install
+
+      expect(lockfile).to include(missing_dep)
+      expect(out).to include("now installed")
     end
   end
 
